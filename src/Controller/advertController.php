@@ -120,6 +120,36 @@ class advertController extends AbstractController
 
     }
 
+    /**
+     * @Route("/advert/{id}", methods={"GET"})
+     * @throws NonUniqueResultException
+     */
+    public function getById(ManagerRegistry $doctrine, $id): JsonResponse
+    {
+        $advertRepo = new AdvertRepository($doctrine);
+        switch ($advertRepo->checkExist( $id)) {
+            case false:
+                $data = ["message" => "Advert  Unknown"];
+                return new JsonResponse($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+
+            default:
+                $serializer = SerializerBuilder::create()->build();
+                $advert = $advertRepo->createQueryBuilder('a')
+                    ->select()
+                    ->where('a.id = :id')
+                    ->setParameter("id", $id)
+                    ->getQuery()
+                    ->getOneOrNullResult();
+                $advertJson = $serializer->serialize($advert, "json");
+                return new JsonResponse(
+                    array(
+                        "advert" => json_decode($advertJson)
+                    ),
+                    Response::HTTP_OK
+                );
+        }
+    }
+
 
 
 }

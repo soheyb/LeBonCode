@@ -87,4 +87,26 @@ class AdvertRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
 
     }
+
+    /**
+     * @param $id
+     * @return bool
+     * @throws NonUniqueResultException
+     */
+    public function checkExist($id):bool
+    {
+
+        $advert = $this->createQueryBuilder('a')
+            ->select()
+            ->where('a.id = :id')
+            ->setParameter("id", $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+
+        $returnValue = !is_null($advert);
+
+        return ($returnValue);
+
+    }
 }
