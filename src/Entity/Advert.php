@@ -3,7 +3,9 @@
 namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
-
+/**
+ * @ORM\Entity(repositoryClass=AdvertRepository::class)
+*/
 
 class Advert{
 
