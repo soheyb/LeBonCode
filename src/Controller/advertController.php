@@ -54,5 +54,41 @@ class advertController extends AbstractController
     }
 
 
+    /**
+     * @Route("/advert/{id}", methods={"DELETE"})
+     * @throws NonUniqueResultException
+     */
+    public function deleteAdvert(ManagerRegistry $doctrine, $id): JsonResponse
+    {
+
+        $advertRepo = new AdvertRepository($doctrine);
+
+
+        switch ($advertRepo->checkExist($id)) {
+            case false:
+                $data = ["message" => "Advert  Unknown"];
+                return new JsonResponse($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+
+            default:
+                $advert = $advertRepo->createQueryBuilder('a')
+                    ->select()
+                    ->where('a.id = :id')
+                    ->setParameter("id", $id)
+                    ->getQuery()
+                    ->getOneOrNullResult();
+
+                $advertRepo->disable($advert);
+                return new JsonResponse(
+                    array(
+                        "message" => "advert disabled"
+                    ),
+                    Response::HTTP_OK
+                );
+        }
+
+
+    }
+
+
 
 }

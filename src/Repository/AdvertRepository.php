@@ -57,4 +57,15 @@ class AdvertRepository extends ServiceEntityRepository
     }
 
 
+    /**
+     * @param $advert
+     * @return void
+     */
+    public function disable($advert):void
+    {
+        $advert->setEnable(0);
+        $this->getEntityManager()->persist($advert);
+        $this->getEntityManager()->flush();
+    }
+
 }
