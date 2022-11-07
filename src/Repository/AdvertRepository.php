@@ -89,6 +89,7 @@ class AdvertRepository extends ServiceEntityRepository
     }
 
     /**
+     * Method used to check if the advert exist
      * @param $id
      * @return bool
      * @throws NonUniqueResultException
@@ -109,4 +110,28 @@ class AdvertRepository extends ServiceEntityRepository
         return ($returnValue);
 
     }
+
+
+    /**
+     * @param array $parameters
+     * @return array
+     */
+    public function findByCustom(array $parameters) :array
+    {
+
+        $adverts = $this->createQueryBuilder('a')
+            ->select()
+            ->where("a.title LIKE :title")
+            ->andWhere('a.price >= :price_min')
+            ->andWhere('a.price <= :price_max')
+            ->setParameters(["title" => "%".$parameters["title"]."%",
+                "price_min" => $parameters["price_min"],
+                "price_max" => $parameters["price_max"]])
+            ->getQuery()
+            ->getArrayResult();
+
+
+        return ($adverts);
+    }
+
 }

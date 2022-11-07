@@ -20,6 +20,35 @@ class advertController extends AbstractController
 
 
     /**
+     * @Route("/advert/search", methods={"GET"})
+     */
+    public function searchAdvert(Request $request, ManagerRegistry $doctrine)
+    {
+        if(Checker::arrayCompare(array(
+                "title",
+                "price_min",
+                "price_max"
+            ), $_GET) === false)
+        {
+
+            return new JsonResponse(
+                array(
+                    "error" => "wrong parameters",
+                ),
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+        $adverts =$doctrine->getRepository(Advert::class)->findByCustom($_GET);
+
+        return new JsonResponse(
+            array(
+                "data" => $adverts
+            ),
+            Response::HTTP_OK
+        );
+    }
+
+    /**
      * @Route("/advert", methods={"POST"})
      */
     public function addAdvert(Request $request, ManagerRegistry $doctrine): JsonResponse
