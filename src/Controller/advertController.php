@@ -89,6 +89,37 @@ class advertController extends AbstractController
 
     }
 
+    /**
+     * @Route("/advert/{id}", methods={"PATCH"})
+     * @throws NonUniqueResultException
+     */
+    public function updateAdvert(Request $request, ManagerRegistry $doctrine, $id): JsonResponse
+    {
+        $advertRepo = new AdvertRepository($doctrine);
+        $parameters = json_decode($request->getContent(), true);
+        switch ($advertRepo->checkExist($doctrine, $id)) {
+            case false:
+                $data = ["message" => "Advert  Unknown"];
+                return new JsonResponse($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+
+            default:
+                $advert = $advertRepo->createQueryBuilder('a')
+                    ->select()
+                    ->where('a.id = :id')
+                    ->setParameter("id", $id)
+                    ->getQuery()
+                    ->getOneOrNullResult();
+                $advertRepo->update($advert, $parameters);
+                return new JsonResponse(
+                    array(
+                        "message" => "advert updated"
+                    ),
+                    Response::HTTP_OK
+                );
+        }
+
+    }
+
 
 
 }

@@ -68,4 +68,23 @@ class AdvertRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
+
+    /**
+     * @param $doctrine
+     * @param $advert
+     * @param $datas
+     * @return bool
+     */
+    public function update($advert, $data) :void
+    {
+
+        empty($data['description']) ? true : $advert->setDescription($data['description']);
+        empty($data['price']) ? true : $advert->setPrice($data['price']);
+        empty($data['zip']) ? true : $advert->setZip($data['zip']);
+        empty($data['city']) ? true : $advert->setCity($data['city']);
+
+        $this->getEntityManager()->persist($advert);
+        $this->getEntityManager()->flush();
+
+    }
 }
